@@ -533,10 +533,19 @@ class SimpleEmailService
 			}
 			return $ses_response;
 		}
+		
+		if ($ses_response->code !== 200 && is_array($ses_response->error)){
+            		$response = array(
+                		'code' => $ses_response->code,
+                		'error' =>  $ses_response->error);
+            		return $response;
+        	}
 
 		$response = array(
+			'code'      => (string)$ses_response->code,
 			'MessageId' => (string)$ses_response->body->{"{$action}Result"}->MessageId,
 			'RequestId' => (string)$ses_response->body->ResponseMetadata->RequestId,
+            		'error'     =>  $ses_response->error,
 		);
 		return $response;
 	}
